@@ -6,13 +6,12 @@ Official implementation of "[Ask Optimal Questions: Aligning Large Language Mode
 > Korea University<sup>1</sup>, NAVER Cloud<sup>2</sup>, KAIST AI<sup>3</sup>, Seoul National University<sup>4</sup> <br>
 > In NAACL 2025.
 
-
 <p align="center">
-    <img width="50%" src='./assets/overview.png"/>
+    📃 <a href="https://arxiv.org/abs/2402.11827" target="_blank">Paper</a> | 🤗 <a href="" target="_blank">Model</a> | 🤗 <a href="https://huggingface.co/datasets/dmis-lab/RF-Collection" target="_blank">RF-Collection</a>
 </p>
 
 <p align="center">
-    📃 <a href="https://arxiv.org/abs/2402.11827" target="_blank">Paper</a> | 🤗 <a href="" target="_blank">Model</a> | 🤗 <a href="https://huggingface.co/datasets/dmis-lab/RF-Collection" target="_blank">RF-Collection</a>
+  <img width="50%" src='./assets/overview.png' alt='Overview Image'/>
 </p>
 
 > **Abstract** Conversational search, unlike single-turn retrieval tasks, requires understanding the current question within a dialogue context. The common approach of rewrite-then-retrieve aims to decontextualize questions to be self-sufficient for off-the-shelf retrievers, but most existing methods produce sub-optimal query rewrites due to the limited ability to incorporate signals from the retrieval results. To overcome this limitation, we present a novel framework RetPO (Retriever's Preference Optimization), which is designed to optimize a language model (LM) for reformulating search queries in line with the preferences of the target retrieval systems. The process begins by prompting a large LM to produce various potential rewrites and then collects retrieval performance for these rewrites as the retrievers' preferences. Through the process, we construct a large-scale dataset called RF collection, containing Retrievers' Feedback on over 410K query rewrites across 12K conversations. Furthermore, we fine-tune a smaller LM using this dataset to align it with the retrievers' preferences as feedback. The resulting model demonstrates superiority on two benchmarks, surpassing the previous state-of-the-art performance of rewrite-then-retrieve approaches, including GPT-3.5.
