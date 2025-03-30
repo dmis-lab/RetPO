@@ -1,0 +1,11 @@
+tqdm
+IPython
+wget
+datasets
+huggingface_hub
+transformers==4.8.2
+toml
+pyserini==0.22.1
+numpy==1.26.2
+pytrec-eval
+wandb
