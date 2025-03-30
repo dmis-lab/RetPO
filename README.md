@@ -2,6 +2,15 @@
 
 Official implementation of "[Ask Optimal Questions: Aligning Large Language Models with Retriever’sPreference](https://arxiv.org/abs/2402.11827)". <br>
 
+> [Chanwoong Yoon<sup>1*</sup>](https://scholar.google.com/citations?user=-9GfY0AAAAAJ&hl=en), [Gangwoo Kim<sup>1*</sup>](https://scholar.google.com/citations?user=TmWGEFgAAAAJ&hl=en), [Byeongguk Jeon<sup>1</sup>](https://scholar.google.com/citations?user=_Kw32VoAAAAJ&hl=en), [Sungdong Kim<sup>2,3</sup>](https://scholar.google.com/citations?user=xKrSnDoAAAAJ&hl=en), [Yohan Jo<sup>4</sup>](https://scholar.google.com/citations?user=xp3LGRQAAAAJ&hl=en), [Jaewoo Kang<sup>1</sup>](https://scholar.google.co.kr/citations?user=RaBZafQAAAAJ&hl=en)<br>
+> Korea University<sup>1</sup>, NAVER Cloud<sup>2</sup>, KAIST AI<sup>3</sup>, Seoul National University<sup>4</sup> <br>
+> In NAACL 2025.
+
+
+<p align="center">
+    <img width="50%" src='./assets/overview.png"/>
+</p>
+
 <p align="center">
     📃 <a href="https://arxiv.org/abs/2402.11827" target="_blank">Paper</a> | 🤗 <a href="" target="_blank">Model</a> | 🤗 <a href="https://huggingface.co/datasets/dmis-lab/RF-Collection" target="_blank">RF-Collection</a>
 </p>
