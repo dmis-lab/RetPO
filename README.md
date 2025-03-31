@@ -17,19 +17,9 @@ Official implementation of "[Ask Optimal Questions: Aligning Large Language Mode
 > **Abstract** Conversational search, unlike single-turn retrieval tasks, requires understanding the current question within a dialogue context. The common approach of rewrite-then-retrieve aims to decontextualize questions to be self-sufficient for off-the-shelf retrievers, but most existing methods produce sub-optimal query rewrites due to the limited ability to incorporate signals from the retrieval results. To overcome this limitation, we present a novel framework RetPO (Retriever's Preference Optimization), which is designed to optimize a language model (LM) for reformulating search queries in line with the preferences of the target retrieval systems. The process begins by prompting a large LM to produce various potential rewrites and then collects retrieval performance for these rewrites as the retrievers' preferences. Through the process, we construct a large-scale dataset called RF collection, containing Retrievers' Feedback on over 410K query rewrites across 12K conversations. Furthermore, we fine-tune a smaller LM using this dataset to align it with the retrievers' preferences as feedback. The resulting model demonstrates superiority on two benchmarks, surpassing the previous state-of-the-art performance of rewrite-then-retrieve approaches, including GPT-3.5.
 
 ## Content
-1. Environment
-2. Dataset Preparation
-- TopiOCQA, QReCC, CAST-19, CAST-20
-- LLM Prompting
-3. Retriever Indexing (BM25, ANCE)
-- Document preprocessing (tokenization)
-- Document Embedding
-4. Collect Retriever's Preferences (Retriever evaluation)
-- CPU, GPU search
-- assign rank
-4. Training & Inference
-- construct binarized preference sets
-- SFT, DPO
+1. Installation Instructions
+2. Evaluation
+3. RetPO (Retriever's Preference Optimization) 
 
 ## 1. Installation Instructions
 Please be aware that we utilize two distinct environments.
@@ -43,7 +33,7 @@ As we require a lot of retrieval of dense retriever, we recommend to consider to
 # create environment
 conda create -n retpo python==3.9 && conda activate retpo_search
 
-# torch
+# install torch
 pip install torch==1.12.0+cu116 torchvision==0.13.0+cu116 torchaudio==0.12.0 --extra-index-url https://download.pytorch.org/whl/cu116
 
 # faiss-cpu or faiss-gpu
@@ -53,7 +43,6 @@ pip install faiss-cpu==1.7.3
 pip install https://github.com/kyamagu/faiss-wheels/releases/download/v1.7.3/faiss_gpu-1.7.3-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 
 # other requirements
-cd RetPO
 pip install -r requirements.txt
 
 ```
@@ -120,7 +109,7 @@ bash ./scripts/bm25_topiocqa.sh
 
 ### Download RF-Collection
 We construct a large-scale dataset called RF-COLLECTION, containing Retrievers’ Feedback on over 410K query rewrites across 12K conversations.
-You can download it from [RF-Collection](https://huggingface.co/datasets/dmis-lab/RF-Collection) using the following command.
+You can download it from [Huggingface](https://huggingface.co/datasets/dmis-lab/RF-Collection) using the following command.
 ```python
 from datasets import load_dataset
 
