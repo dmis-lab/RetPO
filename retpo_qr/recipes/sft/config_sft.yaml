@@ -1,7 +1,7 @@
 # Script Arguments
-dataset_dir: ./dataset/topiocqa-oqf-union/bm25/sft_top5_rank30
+dataset_dir: ./dataset/topiocqa/sft
 model_name_or_path: meta-llama/Llama-2-7b-hf
-output_dir: ./results/topiocqa/llama2-7b/oqf-union-bm25/sft
+output_dir: ./results/topiocqa/llama2-7b/sft
 target_key: "oqs_bm25"
 
 n_toy: -1

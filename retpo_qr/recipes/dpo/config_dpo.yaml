@@ -1,7 +1,7 @@
 # Script Arguments
-dataset_dir: ./dataset/topiocqa-oqf-union/bm25/dpo/random
-model_name_or_path: ./results/topiocqa/llama2-7b/oqf-union-bm25/sft_from_qe
-output_dir: results/topiocqa/llama2-7b/oqf-union-bm25/dpo/random
+dataset_dir: ./dataset/topiocqa/dpo
+model_name_or_path: ./results/topiocqa/llama2-7b/sft
+output_dir: results/topiocqa/llama2-7b/dpo
 num_train_epochs: 3
 beta: 0.1
 

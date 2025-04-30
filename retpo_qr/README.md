@@ -2,136 +2,135 @@
     🤗 <a href="https://huggingface.co/collections/alignment-handbook/handbook-v01-models-and-datasets-654e424d22e6880da5ebc015" target="_blank">Datasets</a> | 🤗 <a href="https://huggingface.co/collections/alignment-handbook/handbook-v01-models-and-datasets-654e424d22e6880da5ebc015" target="_blank">Models</a>
 </p> -->
 
-# RetPO - LLM Alignment
+# RetPO - Retrievers' Preference Optimization for LLMs
 
 Recipes for fine-tuning LLMs with retriever preferences.
 
+## Table of Contents
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Training](#training)
+  - [Inference](#inference)
+- [Models](#models)
 
----
+## Features
+- Supervised Fine-tuning (SFT) with retrieval enhancement
+- Direct Preference Optimization (DPO) for further alignment
+- Support for multiple datasets (QReCC, TopiOCQA)
+- Distributed training with DeepSpeed integration
 
-## Installation Instructions  
+## Requirements
+- Python 3.10+
+- CUDA-compatible GPU(s)
+- Minimum 40GB GPU RAM (80GB recommended for full-scale training)
+- Git LFS
+- Hugging Face account
 
-### Step 1: Create a Virtual Environment  
-First, create a Python virtual environment using Conda:  
+## Installation
 
+### 1. Environment Setup
 ```shell
-conda create -n retpo_qr python=3.10 && conda activate retpo_qr
+# Create and activate conda environment
+conda create -n retpo_qr python=3.10
+conda activate retpo_qr
+
+# Install PyTorch 2.1.0
+# Visit https://pytorch.org/get-started/locally/ for specific installation commands
 ```
 
-## Step 2: Install PyTorch (Hardware-Dependent)
-
-Next, install PyTorch v2.1.0 (this specific version is crucial for reproducibility).
-Follow the instructions on the PyTorch Installation Page based on your hardware.
-
-## Step 3: Install Dependencies
-
-Once PyTorch is installed, navigate to the project directory and install the required dependencies:
-
+### 2. Install Dependencies
 ```shell
+# Install main packages
 python -m pip install .
-```
 
-Step 4: Install Flash Attention 2 (Optional, but Recommended for Faster Training)
-
-If your machine has less than 96GB of RAM and many CPU cores, reduce MAX_JOBS, e.g.:
-
-```shell
+# Install Flash Attention 2 (Optional, recommended for faster training)
+# For machines with <96GB RAM, reduce MAX_JOBS
 python -m pip install flash-attn --no-build-isolation
-```
 
-### Step 5: Log in to Hugging Face
+# Install Git LFS
+sudo apt-get install git-lfs
 
-Authenticate your Hugging Face account to access model repositories:
-```shell
+# Login to Hugging Face
 huggingface-cli login
 ```
 
-### Step 6: Install Git LFS
-
-Git LFS is required for handling large model files. Install it using:
-
-```shell
-sudo apt-get install git-lfs
-```
-
-You can now check out the `recipes` directory for configuration for training models!
-
 ### Download Datasets
 
-To use the datasets, download them from Hugging Face Hub using the following command:
-
-
-## Running the Model
-
-### Train with a Single GPU
-
-Use the following command to train on a single GPU:
+To download the `qr_dataset` directory from the Hugging Face repository, use the following command:
 
 ```shell
-python run_cqr.py recipes/
+huggingface-cli download dmis-lab/RF-Collection \
+  --repo-type dataset \
+  --include "qr_dataset/*" \
+  --local-dir ./dataset
 ```
 
-### Train with Multiple GPUs
+This will download the entire `qr_dataset` directory and save it to the `./dataset` directory in your current working directory
 
-Before running the scripts on multiple GPUs, configure accelerate:
+## Usage
 
+### Training
+You can now check out the `recipes` directory for configuration for training models!
+
+#### Single GPU Training
+
+For Supervised Fine-tuning (SFT):
+
+```shell
+python run_cqr.py recipes/sft/config_sft.yaml
+```
+
+For Direct Preference Optimization (DPO):
+```shell
+python run_cqr_dpo.py recipes/dpo/config_dpo.yaml
+```
+
+#### Multi-GPU Training
+It would use 8 gpus in 
+default with `accelerate` library. We used 8 A100 
+GPUs with 80GB memory. you may want to modify the 
+batch size in each recipe to adjust the memory 
+consumption.
+1. Configure `accelerate`:
 ```shell
 accelerate config
 ```
 
-### Train models with a single command
-
-We train a model in pipeline manner fine-tune LLM to answer the question first and then train it to rewrite the questions. To follow it, you can run the following command. It would use 8 gpus in default with `accelerate` library. We used 8 A100 GPUs with 80GB memory. you may want to modify the batch size in each recipe to adjust the memory consumption.
-
-Then, run the training script:
+2. Launch training:
 ```shell
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml run_cqr_dpo.py recipes/llama2-7b/qrecc/dpo/oqf-bm25/config_full_multi.yaml
+export SCRIPT_PATH='run_cqr.py'  # or run_cqr_dpo.py
+export RECIPE_PATH='recipes/sft/config_sft.yaml'  # or recipes/dpo/config_dpo.yaml
+
+ACCELERATE_LOG_LEVEL=info accelerate launch \
+    --config_file recipes/accelerate_configs/deepspeed_zero3.yaml \
+    $SCRIPT_PATH $RECIPE_PATH
 ```
 
-### Train Models in a Pipeline (End-to-End)
+### Inference
 
-We train models in a pipeline manner, first fine-tuning an LLM to answer questions and then training it to rewrite queries.
-To follow this approach, run:
-
+Generate rewrites using trained models:
 ```shell
-bash train_cqr.sh
-```
-
-This setup defaults to 8 GPUs using accelerate. We used 8 A100 GPUs (80GB memory),
-but you may need to adjust the batch size in each recipe based on available memory.
-
-### Inference (Generating Model Outputs)
-
-To generate inference results from a trained model, use:
-
-
-```shell
-export MODEL_NAME="results/llama2-7b/oqf-joint-bm25/dpo/one_pair"
-export GPU=1
-
-export MODEL_PATH=$MODEL_NAME
-export OUTPUT_PATH=$MODEL_NAME
+export DATASET_NAME='qrecc'  # or 'topiocqa'
+export MODEL_PATH='path/to/your/checkpoint'
+export BATCH_SIZE=8  # adjust based on GPU memory
 export ARGS=""
-echo model_name-$MODEL_NAME
-echo gpu-$GPU
 
-CUDA_VISIBLE_DEVICES=$GPU python inf_cqr.py \
+python inf_cqr.py \
     --do_eval true \
-    --dataset_dir dataset/qrecc-analysis \
-    --output_dir $OUTPUT_PATH \
-    --do_eval true \
+    --dataset_dir dataset/$DATASET_NAME/bm25/test.json \
+    --output_dir $MODEL_PATH \
     --model_name_or_path $MODEL_PATH \
-    --per_device_eval_batch_size 2 \
-    --eval_split eval-100 \
+    --per_device_eval_batch_size $BATCH_SIZE \
+    --eval_split test \
     $ARGS
 ```
 
-### Download Our Models
+## Models
 
-To use our pre-trained models, download them from Hugging Face Hub using:
+Pre-trained models are available on the Hugging Face Hub. Instructions for downloading and using specific models will be added soon.
 
 
-### Reference
-
-This repository is inspired by and follows best practices from the Alignment Handbook repository.
-For further details, check the original repository: link
+## Acknowledgments
+This project is inspired by and builds upon the [Alignment Handbook](https://github.com/huggingface/alignment-handbook) repository.
